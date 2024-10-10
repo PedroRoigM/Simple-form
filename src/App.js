@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
-
+import Login from './components/Login';
+import Mensaje from './components/Mensaje';
 function App() {
+  let newUser;
+  const [msg, setMsg] = useState('');
+  const getData = (newData) => {
+    newUser = newData;
+    dowload1();
+  };
+  function dowload1(){
+      fetch('https://jsonplaceholder.typicode.com/users')
+          .then(response => response.json())
+          .then(data => checkUser(data))
+  }
+  const checkUser = (data) =>{
+    let check = false;
+    data.forEach(user => {
+      if(user.username == newUser.user)
+        if(user.email == newUser.email){
+          setMsg(`Bienvenido ${user.username}`);
+          check = true;
+          return;
+        }
+      
+    });
+    if(!check)
+      setMsg(`Usuario o contraseña equivocada`);
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>
+        Login
+      </h1>
+      <Login sendData={getData}/>
+      <Mensaje msg={msg}/>
     </div>
   );
 }
